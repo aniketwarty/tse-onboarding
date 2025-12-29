@@ -1,0 +1,19 @@
+.listContainer {
+  margin-top: 3rem;
+}
+
+.itemContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+}
+
+.title {
+  font: var(--font-heading);
+}
+
+.errorModalText {
+  color: var(--color-tse-navy-blue);
+}
