@@ -31,7 +31,7 @@ export const getTask: RequestHandler = async (req, res, next) => {
 
   try {
     // if the ID doesn't exist, then findById returns null
-    const task = await TaskModel.findById(id);
+    const task = await TaskModel.findById(id).populate("assignee");
 
     if (task === null) {
       throw createHttpError(404, "Task not found.");
@@ -53,12 +53,13 @@ type CreateTaskBody = {
   title: string;
   description?: string;
   isChecked?: boolean;
+  assignee: string;
 };
 
 export const createTask: RequestHandler = async (req, res, next) => {
   // extract any errors that were found by the validator
   const errors = validationResult(req);
-  const { title, description, isChecked } = req.body as CreateTaskBody;
+  const { title, description, isChecked, assignee } = req.body as CreateTaskBody;
 
   try {
     // if there are errors, then this function throws an exception
@@ -69,7 +70,10 @@ export const createTask: RequestHandler = async (req, res, next) => {
       description,
       isChecked,
       dateCreated: Date.now(),
+      assignee,
     });
+
+    await task.populate("assignee");
 
     // 201 means a new resource has been created successfully
     // the newly created task is sent back to the user
@@ -115,7 +119,7 @@ export const updateTask: RequestHandler = async (req, res, next) => {
       description,
       isChecked,
       dateCreated,
-    });
+    }).populate("assignee");
 
     if (updatedTask === null) {
       throw createHttpError(404);
@@ -127,6 +131,7 @@ export const updateTask: RequestHandler = async (req, res, next) => {
       description,
       isChecked,
       dateCreated,
+      assignee: updatedTask.assignee,
     });
   } catch (error) {
     next(error);

@@ -5,7 +5,7 @@ import type { RequestHandler } from "express";
 
 export const getAllTasks: RequestHandler = async (req, res, next) => {
   try {
-    const allTasks = await TaskModel.find({}).sort({ dateCreated: -1 });
+    const allTasks = await TaskModel.find({}).sort({ dateCreated: -1 }).populate("assignee");
 
     if (allTasks === null) {
       throw createHttpError(404, "Tasks not found.");
