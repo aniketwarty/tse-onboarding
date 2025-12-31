@@ -101,11 +101,12 @@ type UpdateTaskBody = {
   description?: string;
   isChecked?: boolean;
   dateCreated?: Date;
+  assignee?: string;
 };
 
 export const updateTask: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
-  const { _id, title, description, isChecked, dateCreated } = req.body as UpdateTaskBody;
+  const { _id, title, description, isChecked, dateCreated, assignee } = req.body as UpdateTaskBody;
 
   try {
     validationErrorParser(errors);
@@ -114,12 +115,16 @@ export const updateTask: RequestHandler = async (req, res, next) => {
       res.status(400);
     }
 
-    const updatedTask = await TaskModel.findByIdAndUpdate(_id, {
-      title,
-      description,
-      isChecked,
-      dateCreated,
-    }).populate("assignee");
+    const updatedTask = await TaskModel.updateOne(
+      { _id },
+      {
+        title,
+        description,
+        isChecked,
+        dateCreated,
+        assignee,
+      },
+    ).populate("assignee");
 
     if (updatedTask === null) {
       throw createHttpError(404);
@@ -131,7 +136,7 @@ export const updateTask: RequestHandler = async (req, res, next) => {
       description,
       isChecked,
       dateCreated,
-      assignee: updatedTask.assignee,
+      assignee,
     });
   } catch (error) {
     next(error);
