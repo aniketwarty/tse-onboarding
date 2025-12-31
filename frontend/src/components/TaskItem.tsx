@@ -1,7 +1,8 @@
 import { Dialog } from "@tritonse/tse-constellation";
 import { useState } from "react";
+import { Link } from "react-router";
 import { type Task, updateTask } from "src/api/tasks";
-import { CheckButton } from "src/components";
+import { CheckButton, UserTag } from "src/components";
 import styles from "src/components/TaskItem.module.css";
 
 export type TaskItemProps = {
@@ -15,7 +16,7 @@ export function TaskItem({ task: initialTask }: TaskItemProps) {
 
   const handleToggleCheck = () => {
     setLoading(true);
-    updateTask({ ...task, isChecked: !task.isChecked })
+    updateTask({ ...task, isChecked: !task.isChecked, assignee: task.assignee?._id })
       .then((response) => {
         if (response.success) {
           setTask(response.data);
@@ -30,9 +31,14 @@ export function TaskItem({ task: initialTask }: TaskItemProps) {
   return (
     <div className={styles.item}>
       <CheckButton checked={task.isChecked} onPress={handleToggleCheck} disabled={isLoading} />
-      <div className={`${styles.textContainer} ${task.isChecked && styles.checked}`}>
-        <span className={styles.title}>{task.title}</span>
-        {task.description && <span className={styles.description}>{task.description}</span>}
+      <div className={styles.taskContainer}>
+        <div className={`${styles.textContainer} ${task.isChecked && styles.checked}`}>
+          <Link className={styles.link} to={`/task/${task._id}`}>
+            <span className={styles.title}>{task.title}</span>
+          </Link>
+          {task.description && <span className={styles.description}>{task.description}</span>}
+        </div>
+        <UserTag user={task.assignee} className={styles.userTag} />
       </div>
       <Dialog
         styleVersion="styled"

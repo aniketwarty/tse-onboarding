@@ -1,0 +1,12 @@
+.userTag {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 0.5rem;
+}
+
+.profilePicture {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+}
