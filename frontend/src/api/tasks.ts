@@ -83,6 +83,9 @@ export type UpdateTaskRequest = {
  */
 export async function createTask(task: CreateTaskRequest): Promise<APIResult<Task>> {
   try {
+    if (!task.assignee) {
+      task.assignee = undefined;
+    }
     const response = await post("/api/task", task);
     const json = (await response.json()) as TaskJSON;
     return { success: true, data: parseTask(json) };
